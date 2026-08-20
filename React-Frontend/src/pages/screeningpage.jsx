@@ -3,8 +3,9 @@ import PatientForm from '../components/PatientForm'
 import RiskResult  from '../components/RiskResult'
 import { predictRisk, mockPredict } from '../utils/api'
 
-const USE_MOCK = true  // ← change to false when backend is ready
-
+//const USE_MOCK = true  // ← change to false when backend is ready
+// AFTER:
+const USE_MOCK = false
 export default function ScreeningPage() {
   const [result,  setResult]  = useState(null)
   const [loading, setLoading] = useState(false)
