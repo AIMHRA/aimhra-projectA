@@ -1,11 +1,15 @@
 import { useState } from 'react'
+
+// These 8 fields match exactly what Django backend expects
 const FIELDS = [
-  { key: 'age',          label: 'Age',                    unit: 'years', min: 10,  max: 65,  step: 1,   placeholder: 'e.g. 25'   },
-  { key: 'systolic_bp',  label: 'Systolic Blood Pressure', unit: 'mmHg',  min: 70,  max: 200, step: 1,   placeholder: 'e.g. 120'  },
-  { key: 'diastolic_bp', label: 'Diastolic Blood Pressure',unit: 'mmHg',  min: 40,  max: 150, step: 1,   placeholder: 'e.g. 80'   },
-  { key: 'bs',           label: 'Blood Sugar (Fasting)',   unit: 'mg/dl', min: 3.5, max: 9,   step: 0.1, placeholder: 'e.g. 5.8'  },
-  { key: 'body_temp',    label: 'Body Temperature',        unit: '°F',    min: 95,  max: 105, step: 0.1, placeholder: 'e.g. 98.6' },
-  { key: 'heart_rate',   label: 'Heart Rate',              unit: 'bpm',   min: 40,  max: 160, step: 1,   placeholder: 'e.g. 80'   },
+  { key: 'age',             label: 'Age',                      unit: 'years', min: 10,  max: 65,  step: 1,   placeholder: 'e.g. 25'    },
+  { key: 'systolic_bp',     label: 'Systolic Blood Pressure',  unit: 'mmHg',  min: 70,  max: 200, step: 1,   placeholder: 'e.g. 120'   },
+  { key: 'diastolic_bp',    label: 'Diastolic Blood Pressure', unit: 'mmHg',  min: 40,  max: 150, step: 1,   placeholder: 'e.g. 80'    },
+  { key: 'body_temp',       label: 'Body Temperature',         unit: '°F',    min: 95,  max: 105, step: 0.1, placeholder: 'e.g. 98.6'  },
+  { key: 'heart_rate',      label: 'Heart Rate',               unit: 'bpm',   min: 40,  max: 160, step: 1,   placeholder: 'e.g. 80'    },
+  { key: 'bmi',             label: 'BMI',                      unit: 'kg/m²', min: 10,  max: 50,  step: 0.1, placeholder: 'e.g. 22.5'  },
+  { key: 'hba1c',           label: 'Blood Glucose (HbA1c)',    unit: '%',     min: 4,   max: 15,  step: 0.1, placeholder: 'e.g. 5.7'   },
+  { key: 'fasting_glucose', label: 'Fasting Blood Glucose',    unit: 'mg/dl', min: 3.5, max: 9,   step: 0.1, placeholder: 'e.g. 5.0'   },
 ]
 
 export default function PatientForm({ onSubmit, loading }) {
@@ -17,10 +21,10 @@ export default function PatientForm({ onSubmit, loading }) {
     const errs = {}
     FIELDS.forEach(f => {
       const v = parseFloat(form[f.key])
-      if (form[f.key] === '')       errs[f.key] = 'Required'
-      else if (isNaN(v))            errs[f.key] = 'Must be a number'
-      else if (v < f.min)           errs[f.key] = `Min value is ${f.min}`
-      else if (v > f.max)           errs[f.key] = `Max value is ${f.max}`
+      if (form[f.key] === '') errs[f.key] = 'Required'
+      else if (isNaN(v))      errs[f.key] = 'Must be a number'
+      else if (v < f.min)     errs[f.key] = `Min is ${f.min}`
+      else if (v > f.max)     errs[f.key] = `Max is ${f.max}`
     })
     return errs
   }
@@ -38,10 +42,7 @@ export default function PatientForm({ onSubmit, loading }) {
     onSubmit(form)
   }
 
-  function reset() {
-    setForm(empty)
-    setErrors({})
-  }
+  function reset() { setForm(empty); setErrors({}) }
 
   return (
     <form onSubmit={handleSubmit} style={{ width: '100%' }}>
@@ -59,18 +60,12 @@ export default function PatientForm({ onSubmit, loading }) {
               onChange={onChange}
               min={f.min} max={f.max} step={f.step}
               placeholder={f.placeholder}
-              style={{
-                ...styles.input,
-                borderColor: errors[f.key] ? '#E24B4A' : '#ddd'
-              }}
+              style={{ ...styles.input, borderColor: errors[f.key] ? '#E24B4A' : '#ddd' }}
             />
-            {errors[f.key] && (
-              <p style={styles.error}>⚠ {errors[f.key]}</p>
-            )}
+            {errors[f.key] && <p style={styles.error}>⚠ {errors[f.key]}</p>}
           </div>
         ))}
       </div>
-
       <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
         <button type="submit" disabled={loading} style={styles.btnPrimary}>
           {loading ? '⏳ Assessing...' : '🔍 Assess Risk'}
@@ -84,14 +79,10 @@ export default function PatientForm({ onSubmit, loading }) {
 }
 
 const styles = {
-  label:       { display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4, color: '#333' },
-  unit:        { fontWeight: 400, color: '#888', fontSize: 12 },
-  input:       { width: '100%', padding: '8px 10px', border: '1px solid #ddd',
-                  borderRadius: 6, fontSize: 14, outline: 'none' },
-  error:       { fontSize: 11, color: '#E24B4A', marginTop: 3 },
-  btnPrimary:  { flex: 1, padding: '10px 0', background: '#1D9E75', color: 'white',
-                  border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 500,
-                  cursor: 'pointer' },
-  btnSecondary:{ padding: '10px 18px', background: 'white', color: '#555',
-                  border: '1px solid #ddd', borderRadius: 8, fontSize: 14, cursor: 'pointer' },
+  label:        { display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4, color: '#333' },
+  unit:         { fontWeight: 400, color: '#888', fontSize: 12 },
+  input:        { width: '100%', padding: '8px 10px', border: '1px solid #ddd', borderRadius: 6, fontSize: 14, outline: 'none', boxSizing: 'border-box' },
+  error:        { fontSize: 11, color: '#E24B4A', marginTop: 3, margin: '3px 0 0' },
+  btnPrimary:   { flex: 1, padding: '10px 0', background: '#1D9E75', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 500, cursor: 'pointer' },
+  btnSecondary: { padding: '10px 18px', background: 'white', color: '#555', border: '1px solid #ddd', borderRadius: 8, fontSize: 14, cursor: 'pointer' },
 }
